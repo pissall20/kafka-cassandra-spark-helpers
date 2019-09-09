@@ -44,10 +44,10 @@ class CassandraDriver(object):
         rows = session.execute(
             f"SELECT * FROM {self.table_name} WHERE key<'{end_timestamp}' and key>'{start_timestamp}' ALLOW FILTERING"
         )
-        if rows:
-            df = pd.DataFrame(list(rows))
-        else:
+        if not rows:
             raise ValueError("No rows were returned from the database")
+        df = pd.DataFrame(list(rows))
+
         if remove_tzinfo:
             df["key"] = df["key"].replace(tzinfo=None)
         df.sort_values(by=["key"], inplace=True)
@@ -61,10 +61,9 @@ class CassandraDriver(object):
         """
         session = self.connect_to_db()
         rows = session.execute(f"SELECT * FROM {self.table_name}")
-        if rows:
-            df = pd.DataFrame(list(rows))
-        else:
+        if not rows:
             raise ValueError("No rows were returned from the database")
+        df = pd.DataFrame(list(rows))
 
         if remove_tzinfo:
             df["key"] = df["key"].replace(tzinfo=None)
