@@ -53,10 +53,11 @@ def spark_cassandra_connector(
     spark_master_url, connection_host, table_name, key_space, cassandra_package=None
 ):
     # A cassandra connector is needed
-    if cassandra_package:
-        needed_spark_package = cassandra_package
-    else:
-        needed_spark_package = "com.datastax.spark:spark-cassandra-connector_2.11:2.4.0"
+    needed_spark_package = (
+        cassandra_package
+        if cassandra_package
+        else "com.datastax.spark:spark-cassandra-connector_2.11:2.4.0"
+    )
 
     spark = create_spark_session(
         master_url=spark_master_url, packages=needed_spark_package
