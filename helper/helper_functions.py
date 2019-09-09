@@ -47,7 +47,7 @@ def connect_to_sql(spark_master_url, jdbc_hostname, jdbc_port, database, data_ta
     return df
 
 
-def cassandra_connector(spark_master_url, connection_host, table_name, key_space, cassandra_package=None):
+def spark_cassandra_connector(spark_master_url, connection_host, table_name, key_space, cassandra_package=None):
     # A cassandra connector is needed
     if cassandra_package:
         needed_spark_package = cassandra_package
