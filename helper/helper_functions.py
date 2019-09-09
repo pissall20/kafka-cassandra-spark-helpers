@@ -33,7 +33,9 @@ def create_spark_session(master_url, packages=None):
     return spark
 
 
-def connect_to_sql(spark_master_url, jdbc_hostname, jdbc_port, database, data_table, username, password):
+def connect_to_sql(
+    spark_master_url, jdbc_hostname, jdbc_port, database, data_table, username, password
+):
     spark = create_spark_session(spark_master_url)
     jdbc_url = "jdbc:mysql://{0}:{1}/{2}".format(jdbc_hostname, jdbc_port, database)
 
@@ -47,7 +49,9 @@ def connect_to_sql(spark_master_url, jdbc_hostname, jdbc_port, database, data_ta
     return df
 
 
-def spark_cassandra_connector(spark_master_url, connection_host, table_name, key_space, cassandra_package=None):
+def spark_cassandra_connector(
+    spark_master_url, connection_host, table_name, key_space, cassandra_package=None
+):
     # A cassandra connector is needed
     if cassandra_package:
         needed_spark_package = cassandra_package
@@ -59,7 +63,9 @@ def spark_cassandra_connector(spark_master_url, connection_host, table_name, key
     )
 
     spark.conf.set("spark.cassandra.connection.host", str(connection_host))
-    data = spark.read.format("org.apache.spark.sql.cassandra").load(keyspace=key_space, table=table_name)
+    data = spark.read.format("org.apache.spark.sql.cassandra").load(
+        keyspace=key_space, table=table_name
+    )
     return data
 
 

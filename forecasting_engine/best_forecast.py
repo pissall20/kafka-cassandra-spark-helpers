@@ -83,9 +83,7 @@ class BestForecast(BestForecastInterface):
             best model's mape
         """
 
-        train_ts, test_ts = self.data_preprocessing(
-            time_series, split_ratio
-        )
+        train_ts, test_ts = self.data_preprocessing(time_series, split_ratio)
         self.forecasting_results = self.get_forecasts_from_all_models(
             time_series, train_ts, test_ts, forecasting_models
         )
