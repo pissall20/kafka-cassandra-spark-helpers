@@ -11,7 +11,7 @@ class CassandraInterface(object):
         self.ip_address = ip_address if isinstance(ip_address, list) else [ip_address]
         self.port = port
         self.key_space = key_space
-        self.key_space_changed = False if self.key_space else True
+        self.key_space_changed = False
         self.table_name = table_name
         self.session = None
 
