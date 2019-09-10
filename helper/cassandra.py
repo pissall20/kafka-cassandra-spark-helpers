@@ -111,11 +111,23 @@ class CassandraInterface(object):
     def _create_key_space(self, new_key_space_name, config_dict=None):
         if not config_dict:
             config_dict = {"class": "SimpleStrategy", "replication_factor": 3}
-        query = f"""CREATE KEYSPACE IF NOT EXISTS {new_key_space_name} WITH REPLICATION = {str(config_dict)};"""
+        query = f"CREATE KEYSPACE IF NOT EXISTS {new_key_space_name} WITH REPLICATION = {str(config_dict)};"
         session = self.connect_to_db()
         try:
             session.execute(query)
         except Exception as e:
             self.logger.error(str(e))
             raise e
+        print(
+            "Please update the key_space using `object.key_space = new_key_space_name` \n"
+            "if you want to start using the created keyspace."
+        )
         self.logger.info(f"Successfully created keyspace {new_key_space_name}")
+
+    def _drop_key_space(self, key_space_name):
+        if self.key_space == key_space_name:
+            raise ValueError("Keyspace {key_space_name} is in use. Please set it to `None` before trying to drop it.")
+        query = f"DROP KEYSPACE {key_space_name}"
+        self.connect_to_db().execute(query)
+        self.logger.info(f"Successfully dropped keyspace {key_space_name}")
+
