@@ -51,8 +51,10 @@ class CassandraInterface(object):
         Public interface (crude singleton) for database connection with Cassandra DB
         :return: A cassandra DB session object
         """
-        if not self.session or self.key_space_changed:
+        if not self.session:
             self.session = self._connect_to_db()
+        if self.key_space_changed:
+            self.session.set_keyspace(self.key_space)
         return self.session
 
     def retrieve_with_timestamps(self, start_timestamp, end_timestamp, remove_tzinfo=True):
