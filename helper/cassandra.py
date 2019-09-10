@@ -6,7 +6,7 @@ from cassandra.cluster import Cluster
 from logger import Logger
 
 
-class CassandraDriver(object):
+class CassandraInterface(object):
 
     def __init__(self, ip_address, port, key_space=None, table_name=None):
         self.ip_address = ip_address
