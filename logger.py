@@ -8,13 +8,13 @@ class Logger(object):
     def __init__(self, name):
         name = name.replace('.log', '')
         logger = logging.getLogger('logs.%s' % name)  # logs is a namespace
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.ERROR)
         if not logger.handlers:
             file_name = os.path.join(self.LOGGING_DIR, '%s.log' % name)
             handler = logging.FileHandler(file_name)
             formatter = logging.Formatter('%(asctime)s %(levelname)s:%(name)s %(message)s')
             handler.setFormatter(formatter)
-            handler.setLevel(logging.DEBUG)
+            handler.setLevel(logging.ERROR)
             logger.addHandler(handler)
         self._logger = logger
 
