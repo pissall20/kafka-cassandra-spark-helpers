@@ -45,7 +45,7 @@ class HoltWinters(object):
                 )
                 # Save the forecasting results to be reflected back to the Manager
                 TrainTestData[3]["HoltWinters"] = forecasting_result(
-                    holtwinters_mape, holtwinters_rmse, best_trend
+                    holtwinters_mape, holtwinters_rmse, best_trend, self
                 )
             else:
                 print("QC failed for HoltWinters")

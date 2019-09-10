@@ -24,7 +24,7 @@ class Auto_Arima(object):
             best_mape, best_rmse, best_cfg = self._apply_auto_arima()
             # Save the forecasting results to be reflected back to the Manager
             TrainTestData[3]["Auto_Arima"] = forecasting_result(
-                best_mape, best_rmse, best_cfg
+                best_mape, best_rmse, best_cfg, self
             )
 
     def _apply_auto_arima(self):

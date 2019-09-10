@@ -74,7 +74,7 @@ class Lstm(object):
             best_cfg = []
             # Save the forecasting results to be reflected back to the Manager
             TrainTestData[3]["Lstm"] = forecasting_result(
-                mean_mape, mean_rmse, best_cfg
+                mean_mape, mean_rmse, best_cfg, self
             )
 
     # create a differenced series
