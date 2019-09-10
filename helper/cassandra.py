@@ -7,9 +7,8 @@ from logger import Logger
 
 
 class CassandraInterface(object):
-
-    def __init__(self, ip_address, port, key_space=None, table_name=None):
-        self.ip_address = ip_address
+    def __init__(self, ip_address, port=9042, key_space=None, table_name=None):
+        self.ip_address = ip_address if isinstance(ip_address, list) else [ip_address]
         self.port = port
         self.key_space = key_space
         self.key_space_changed = False if self.key_space else True
@@ -43,7 +42,8 @@ class CassandraInterface(object):
         cluster = Cluster(self.ip_address, self.port)
         session = cluster.connect(self.key_space)
         self.logger.info(
-            f"Successfully connected to cluster with {self.key_space if self.key_space else 'no keyspace'}")
+            f"Successfully connected to cluster with {self.key_space if self.key_space else 'no keyspace'}"
+        )
         return session
 
     def connect_to_db(self):
@@ -57,7 +57,9 @@ class CassandraInterface(object):
             self.session.set_keyspace(self.key_space)
         return self.session
 
-    def retrieve_with_timestamps(self, start_timestamp, end_timestamp, remove_tzinfo=True):
+    def retrieve_with_timestamps(
+        self, start_timestamp, end_timestamp, remove_tzinfo=True
+    ):
         """
         Make a cql selection query in the cassandra
         remove_tzinfo if set to true will convert the retrieved values to local timezone
@@ -112,7 +114,7 @@ class CassandraInterface(object):
 
     def _create_key_space(self, new_key_space_name, config_dict=None):
         if not config_dict:
-            config_dict = {'class': 'SimpleStrategy', 'replication_factor': 3}
+            config_dict = {"class": "SimpleStrategy", "replication_factor": 3}
         query = f"""CREATE KEYSPACE IF NOT EXISTS {new_key_space_name} WITH REPLICATION = {str(config_dict)};"""
         session = self.connect_to_db()
         try:
@@ -121,4 +123,3 @@ class CassandraInterface(object):
             self.logger.error(str(e))
             raise e
         self.logger.info(f"Successfully created keyspace {new_key_space_name}")
-
