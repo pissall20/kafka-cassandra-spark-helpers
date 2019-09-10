@@ -70,7 +70,7 @@ class CassandraInterface(object):
         """
         session = self.connect_to_db()
         rows = session.execute(
-            f"SELECT * FROM {self.table_name} WHERE key<'{end_timestamp}' and key>'{start_timestamp}' ALLOW FILTERING"
+            f"SELECT * FROM {self.table_name} WHERE key<'{end_timestamp}' and key>'{start_timestamp}' ALLOW FILTERING;"
         )
         if not rows:
             raise ValueError("No rows were returned from the database")
@@ -87,7 +87,7 @@ class CassandraInterface(object):
         :return: max(date_index)
         """
         session = self.connect_to_db()
-        rows = session.execute(f"SELECT * FROM {self.table_name}")
+        rows = session.execute(f"SELECT * FROM {self.table_name};")
         if not rows:
             raise ValueError("No rows were returned from the database")
         df = pd.DataFrame(list(rows))
@@ -105,7 +105,7 @@ class CassandraInterface(object):
         for i in range(pred_steps):
             session.execute(
                 f"INSERT INTO {self.table_name} (key, value) VALUES"
-                f" ('{start_timestamp + timedelta(seconds=i)}', {predictions[i]})"
+                f" ('{start_timestamp + timedelta(seconds=i)}', {predictions[i]});"
             )
 
     def _create_key_space(self, new_key_space_name, config_dict=None):
@@ -127,7 +127,10 @@ class CassandraInterface(object):
     def _drop_key_space(self, key_space_name):
         if self.key_space == key_space_name:
             raise ValueError("Keyspace {key_space_name} is in use. Please set it to `None` before trying to drop it.")
-        query = f"DROP KEYSPACE {key_space_name}"
+        query = f"DROP KEYSPACE {key_space_name};"
         self.connect_to_db().execute(query)
         self.logger.info(f"Successfully dropped keyspace {key_space_name}")
+
+    def _create_table(self, new_table_name):
+        pass
 
