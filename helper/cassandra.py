@@ -126,11 +126,23 @@ class CassandraInterface(object):
 
     def _drop_key_space(self, key_space_name):
         if self.key_space == key_space_name:
-            raise ValueError("Keyspace {key_space_name} is in use. Please set it to `None` before trying to drop it.")
+            raise ValueError(
+                "Keyspace {key_space_name} is in use. Please set it to `None` before trying to drop it."
+            )
         query = f"DROP KEYSPACE {key_space_name};"
         self.connect_to_db().execute(query)
         self.logger.info(f"Successfully dropped keyspace {key_space_name}")
 
-    def _create_table(self, new_table_name):
-        pass
-
+    def _create_table(self, new_table_name, schema, primary_key_cols):
+        # Create a schema string like 'key timestamp, id text, value double'
+        schema_string = ", ".join(
+            [
+                "".join([column_name, " ", column_type])
+                for column_name, column_type in schema.items()
+            ]
+        )
+        # Add which keys are primary keys to the schema string
+        add_primary_keys = schema_string + f", PRIMARY KEY ({', '.join(list(primary_key_cols))})"
+        query = f"CREATE TABLE {new_table_name} ({add_primary_keys})"
+        self.connect_to_db().execute(query)
+        self.logger.info(f"Successfully dropped table {new_table_name}")
