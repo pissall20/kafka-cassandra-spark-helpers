@@ -42,7 +42,7 @@ class CassandraInterface(object):
         cluster = Cluster(self.ip_address, self.port)
         session = cluster.connect(self.key_space)
         self.logger.info(
-            f"Successfully connected to cluster with {self.key_space if self.key_space else 'no keyspace'}"
+            f"Successfully connected to cluster with {self.key_space if self.key_space else 'no'} keyspace"
         )
         return session
 
