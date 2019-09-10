@@ -40,6 +40,8 @@ class CassandraInterface(object):
         """
         cluster = Cluster(self.ip_address, self.port)
         session = cluster.connect(self.key_space)
+        self.logger.info(
+            f"Successfully connected to cluster with {self.key_space if self.key_space else 'no keyspace'}")
         return session
 
     def connect_to_db(self):
@@ -51,7 +53,7 @@ class CassandraInterface(object):
             self.session = self._connect_to_db()
         return self.session
 
-    def retrieve(self, start_timestamp, end_timestamp, remove_tzinfo=True):
+    def retrieve_with_timestamps(self, start_timestamp, end_timestamp, remove_tzinfo=True):
         """
         Make a cql selection query in the cassandra
         change_time_zone if set to true will convert the retrieved values to local timezone
@@ -89,7 +91,7 @@ class CassandraInterface(object):
             df["key"] = df["key"].replace(tzinfo=None)
         return df["key"].max()
 
-    def writer(self, start_timestamp, pred_steps, predictions):
+    def write_rows(self, start_timestamp, pred_steps, predictions):
         """
         Writes rows to Cassandra DB
         :param start_timestamp:
