@@ -49,7 +49,7 @@ class Arima(object):
             arima_mape, arima_rmse, best_cfg = self._best_arima_model()
             # Save the forecasting results to be reflected back to the Manager
             TrainTestData[3]["Arima"] = forecasting_result(
-                arima_mape, arima_rmse, best_cfg
+                arima_mape, arima_rmse, best_cfg, self
             )
         else:
             print("in final forecasting init:obj  ")

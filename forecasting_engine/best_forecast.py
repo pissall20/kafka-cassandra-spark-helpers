@@ -30,6 +30,7 @@ class BestForecast(BestForecastInterface):
         print("Inside best forecast init")
 
         self.forecasting_results = dict()
+        self.best_model_instance = None
 
     def data_preprocessing(self, time_series, split_ratio):
         """
@@ -108,6 +109,7 @@ class BestForecast(BestForecastInterface):
         best_mape = best_of_all[1].mape
         best_rmse = best_of_all[1].rmse
         best_model_cfg = best_of_all[1].cfg
+        best_model_instance = best_of_all[1].instance
         print("best model for the time series is  : " + best_model)
 
         best_model_class_obj = getattr(sys.modules[__name__], best_model)()
@@ -123,6 +125,12 @@ class BestForecast(BestForecastInterface):
         :return: Best mape among all the models
         """
         return self.best_mape
+
+    def best_model(self):
+        """
+        :return: Best model instance based on rmse
+        """
+        return self.best_model_instance
 
 
 if __name__ == "__main__":

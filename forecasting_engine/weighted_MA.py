@@ -27,7 +27,7 @@ class weighted_moving_average(object):
             wma_mape, wma_rmse = self._best_wma_model()
             # Save the forecasting results to be reflected back to the Manager
             TrainTestData[3]["weighted_moving_average"] = forecasting_result(
-                wma_mape, wma_rmse, []
+                wma_mape, wma_rmse, [], self
             )
 
     def _best_wma_model(self):

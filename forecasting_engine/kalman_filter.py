@@ -56,7 +56,7 @@ class LocalLinearTrend(sm.tsa.statespace.MLEModel):
             best_cfg = []
             # Save the forecasting results to be reflected back to the Manager
             TrainTestData[3]["LocalLinearTrend"] = forecasting_result(
-                mape_error, rmse_error, best_cfg
+                mape_error, rmse_error, best_cfg, self
             )
 
     @property

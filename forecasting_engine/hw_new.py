@@ -48,7 +48,7 @@ class HoltWinters_new(object):
                 holtwinters_mape, holtwinters_rmse = self.triple_exponential_smoothing()
                 # Save the forecasting results to be reflected back to the Manager
                 TrainTestData[3]["HoltWinters_new"] = forecasting_result(
-                    holtwinters_mape, holtwinters_rmse, best_cfg
+                    holtwinters_mape, holtwinters_rmse, best_cfg, self
                 )
 
     def _quality_check(self):
