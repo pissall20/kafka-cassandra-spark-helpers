@@ -46,10 +46,10 @@ class Arima(object):
             self._p_values = range(0, 6, 2)
             self._d_values = range(0, 2)
             self._q_values = range(0, 2)
-            arima_mape, arima_rmse, best_cfg = self._best_arima_model()
+            arima_mape, arima_rmse, best_cfg, best_model = self._best_arima_model()
             # Save the forecasting results to be reflected back to the Manager
             TrainTestData[3]["Arima"] = forecasting_result(
-                arima_mape, arima_rmse, best_cfg, self
+                arima_mape, arima_rmse, best_cfg, best_model
             )
         else:
             print("in final forecasting init:obj  ")
@@ -80,7 +80,7 @@ class Arima(object):
         yhat = model_fit.forecast(len(test))[0]
         mape_error = mape(test, yhat)
         rmse_error = rmse(test, yhat)
-        return mape_error, rmse_error, arima_order
+        return mape_error, rmse_error, arima_order, model
 
     def _best_arima_model(self):
         """
@@ -92,8 +92,8 @@ class Arima(object):
         list_of_orders = list(itertools.product(*s))
         errors_config = [self._apply_arima(order) for order in list_of_orders]
         errors_config.sort()
-        self.best_mape, self.best_rmse, self.best_cfg = errors_config[0]
-        return self.best_mape, self.best_rmse, self.best_cfg
+        best_mape, best_rmse, best_cfg, best_model = errors_config[0]
+        return best_mape, best_rmse, best_cfg, best_model
 
     def get_forecast(self, pred_steps, time_series, best_cfg):
         """
