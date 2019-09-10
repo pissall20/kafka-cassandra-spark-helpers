@@ -36,7 +36,7 @@ class CassandraInterface(object):
 
     def _connect_to_db(self):
         """
-        Achieve a connected to the cassandra db, private method
+        Achieve a connection to the cassandra db, private method
         :return: A cassandra DB session object
         """
         cluster = Cluster(self.ip_address, self.port)
