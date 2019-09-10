@@ -1,19 +1,19 @@
 # coding=utf-8
 import pandas as pd
-from algorithms.forecasting_engine.best_forecast_abc import BestForecastInterface
-from algorithms.forecasting_engine.data_process import DataProcessing
-from algorithms.forecasting_engine.independent_models import TimeSeriesIndependent
+from forecasting_engine.best_forecast_abc import BestForecastInterface
+from forecasting_engine.data_process import DataProcessing
+from forecasting_engine.independent_models import TimeSeriesIndependent
 import time
 import operator
 import numpy as np
 import sys
-from algorithms.forecasting_engine.holtwinters_forecast import HoltWinters
-from algorithms.forecasting_engine.arima_forecast import Arima
-from algorithms.forecasting_engine.auto_arima import Auto_Arima
-from algorithms.forecasting_engine.hw_new import HoltWinters_new
-from algorithms.forecasting_engine.kalman_filter import LocalLinearTrend
-from algorithms.forecasting_engine.lstm_forecast import Lstm
-from algorithms.forecasting_engine.weighted_MA import weighted_moving_average
+from forecasting_engine.holtwinters_forecast import HoltWinters
+from forecasting_engine.arima_forecast import Arima
+from forecasting_engine.auto_arima import Auto_Arima
+from forecasting_engine.hw_new import HoltWinters_new
+from forecasting_engine.kalman_filter import LocalLinearTrend
+from forecasting_engine.lstm_forecast import Lstm
+from forecasting_engine.weighted_MA import weighted_moving_average
 
 
 start = time.time()

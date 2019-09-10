@@ -2,8 +2,8 @@
 import itertools
 import warnings
 from statsmodels.tsa.arima_model import ARIMA
-from algorithms.forecasting_engine.error_metrics import rmse, mape
-from algorithms.forecasting_engine.data_classes import forecasting_result
+from forecasting_engine.error_metrics import rmse, mape
+from forecasting_engine.data_classes import forecasting_result
 import numpy as np
 
 

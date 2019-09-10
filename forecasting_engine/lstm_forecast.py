@@ -5,8 +5,8 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
 from numpy import array
-from algorithms.forecasting_engine.error_metrics import mape, rmse
-from algorithms.forecasting_engine.data_classes import forecasting_result
+from forecasting_engine.error_metrics import mape, rmse
+from forecasting_engine.data_classes import forecasting_result
 
 
 class Lstm(object):

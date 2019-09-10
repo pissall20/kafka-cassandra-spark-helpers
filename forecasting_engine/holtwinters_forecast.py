@@ -1,7 +1,7 @@
 # coding=utf-8
-from algorithms.forecasting_engine.statsmodel_holtwinters import ExponentialSmoothing
-from algorithms.forecasting_engine.error_metrics import rmse, mape
-from algorithms.forecasting_engine.data_classes import forecasting_result
+from forecasting_engine.statsmodel_holtwinters import ExponentialSmoothing
+from forecasting_engine.error_metrics import rmse, mape
+from forecasting_engine.data_classes import forecasting_result
 import math
 import numpy as np
 
