@@ -81,10 +81,9 @@ class CassandraInterface(object):
         df.sort_values(by=["key"], inplace=True)
         return df
 
-    def get_last_timestamp(self, remove_tzinfo=True):
+    def get_last_timestamp(self):
         """
         Get the last timestamp existing in the database
-        :param remove_tzinfo: Cassandra returns timestamps with UTC TZ. Do you wish to remove tz info?
         :return: max(date_index)
         """
         session = self.connect_to_db()
@@ -92,10 +91,7 @@ class CassandraInterface(object):
         if not rows:
             raise ValueError("No rows were returned from the database")
         df = pd.DataFrame(list(rows))
-
-        if remove_tzinfo:
-            df["key"] = df["key"].replace(tzinfo=None)
-        return df["key"].max()
+        return df["key"].max().replace(tzinfo=None)
 
     def write_rows(self, start_timestamp, pred_steps, predictions):
         """
