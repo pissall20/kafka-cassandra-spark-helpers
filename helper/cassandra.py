@@ -12,6 +12,7 @@ class CassandraInterface(object):
         self.ip_address = ip_address
         self.port = port
         self.key_space = key_space
+        self.key_space_changed = False if self.key_space else True
         self.table_name = table_name
         self.session = None
 
@@ -23,6 +24,7 @@ class CassandraInterface(object):
 
     @key_space.setter
     def key_space(self, key_space):
+        self.key_space_changed = True
         self.__key_space = key_space
 
     @property
@@ -49,14 +51,14 @@ class CassandraInterface(object):
         Public interface (crude singleton) for database connection with Cassandra DB
         :return: A cassandra DB session object
         """
-        if not self.session:
+        if not self.session or self.key_space_changed:
             self.session = self._connect_to_db()
         return self.session
 
     def retrieve_with_timestamps(self, start_timestamp, end_timestamp, remove_tzinfo=True):
         """
         Make a cql selection query in the cassandra
-        change_time_zone if set to true will convert the retrieved values to local timezone
+        remove_tzinfo if set to true will convert the retrieved values to local timezone
         :param start_timestamp: start timestamp as datetime.datetime() object
         :param end_timestamp: end timestamp as datetime.datetime() object
         :param remove_tzinfo: if true then remove the timezone info
@@ -117,3 +119,4 @@ class CassandraInterface(object):
             self.logger.error(str(e))
             raise e
         self.logger.info(f"Successfully created keyspace {new_key_space_name}")
+
