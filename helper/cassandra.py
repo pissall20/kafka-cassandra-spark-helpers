@@ -81,7 +81,7 @@ class CassandraInterface(object):
         df.sort_values(by=["key"], inplace=True)
         return df
 
-    def get_last_timestamp(self):
+    def get_last_timestamp(self, time_column="key"):
         """
         Get the last timestamp existing in the database
         :return: max(date_index)
@@ -91,7 +91,7 @@ class CassandraInterface(object):
         if not rows:
             raise ValueError("No rows were returned from the database")
         df = pd.DataFrame(list(rows))
-        return df["key"].max().replace(tzinfo=None)
+        return df[time_column].max().replace(tzinfo=None)
 
     def write_rows(self, start_timestamp, pred_steps, predictions):
         """
@@ -142,7 +142,9 @@ class CassandraInterface(object):
             ]
         )
         # Add which keys are primary keys to the schema string
-        add_primary_keys = schema_string + f", PRIMARY KEY ({', '.join(list(primary_key_cols))})"
+        add_primary_keys = (
+            schema_string + f", PRIMARY KEY ({', '.join(list(primary_key_cols))})"
+        )
         query = f"CREATE TABLE {new_table_name} ({add_primary_keys})"
         self.connect_to_db().execute(query)
         self.logger.info(f"Successfully dropped table {new_table_name}")
