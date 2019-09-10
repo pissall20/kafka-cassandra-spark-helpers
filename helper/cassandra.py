@@ -3,15 +3,35 @@ from datetime import timedelta
 import pandas as pd
 from cassandra.cluster import Cluster
 
+from logger import Logger
+
 
 class CassandraDriver(object):
 
-    def __init__(self, ip_address, port, key_space, table_name):
+    def __init__(self, ip_address, port, key_space=None, table_name=None):
         self.ip_address = ip_address
         self.port = port
         self.key_space = key_space
         self.table_name = table_name
         self.session = None
+
+        self.logger = Logger(self.__class__.__name__).get()
+
+    @property
+    def key_space(self):
+        return self.__key_space
+
+    @key_space.setter
+    def key_space(self, key_space):
+        self.__key_space = key_space
+
+    @property
+    def table_name(self):
+        return self.__key_space
+
+    @table_name.setter
+    def table_name(self, table_name):
+        self.__table_name = table_name
 
     def _connect_to_db(self):
         """
@@ -83,3 +103,15 @@ class CassandraDriver(object):
                 f"INSERT INTO {self.table_name} (key, value) VALUES"
                 f" ('{start_timestamp + timedelta(seconds=i)}', {predictions[i]})"
             )
+
+    def _create_key_space(self, new_key_space_name, config_dict=None):
+        if not config_dict:
+            config_dict = {'class': 'SimpleStrategy', 'replication_factor': 3}
+        query = f"""CREATE KEYSPACE IF NOT EXISTS {new_key_space_name} WITH REPLICATION = {str(config_dict)};"""
+        session = self.connect_to_db()
+        try:
+            session.execute(query)
+        except Exception as e:
+            self.logger.error(str(e))
+            raise e
+        self.logger.info(f"Successfully created keyspace {new_key_space_name}")
