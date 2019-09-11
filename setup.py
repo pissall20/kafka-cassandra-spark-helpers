@@ -29,7 +29,7 @@ def create_random_data():
 
 if __name__ == "__main__":
     cql_connect = CassandraInterface(settings.CASSANDRA_IP, settings.CASSANDRA_PORT)
-    new_keyspace, new_table = "eugenie_iot", "demo_table_1"
+    new_keyspace, new_table = settings.CASSANDRA_KEY_SPACE, settings.CASSANDRA_TABLE_NAME
     cql_connect._create_key_space(new_keyspace)
     cql_connect.key_space = new_keyspace
 
