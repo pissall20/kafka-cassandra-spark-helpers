@@ -4,7 +4,7 @@ import numpy as np
 import settings
 from helper.cassandra import CassandraInterface
 
-new_table_schema = {"id": "text", "key": "timestamp", "value": "double"}
+new_table_schema = settings.TABLE_SCHEMA
 
 
 def create_random_data():
