@@ -25,13 +25,15 @@ class ModelTrainer(object):
             settings.CASSANDRA_PORT,
             settings.CASSANDRA_KEY_SPACE,
             settings.CASSANDRA_TABLE_NAME,
-            settings.TABLE_SCHEMA
+            settings.TABLE_SCHEMA,
         )
 
         self.last_timestamp = None
 
     def _load_all_data(self):
-        initial_data, max_time_stamp = self.cql_connect.get_initial_data(time_column=settings.TIME_COLUMN)
+        initial_data, max_time_stamp = self.cql_connect.get_initial_data(
+            time_column=settings.TIME_COLUMN
+        )
         self.last_timestamp = max_time_stamp
         return initial_data
 
@@ -60,12 +62,13 @@ class ModelTrainer(object):
 
     def save_model(self, file_path, model_name, id_prefix=None):
         if not self.trained_model:
-            self.logger.error('The model has not been trained to be saved.')
+            self.logger.error("The model has not been trained to be saved.")
             raise ValueError("The model has not been trained to be saved.")
-        date_time = datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
-        file_name = f"{(str(id_prefix) + '-') if id_prefix else ''}{model_name}-{date_time}.pkl"
+        date_time = datetime.datetime.today().strftime("%Y-%m-%d-%H:%M:%S")
+        file_name = (
+            f"{(str(id_prefix) + '-') if id_prefix else ''}{model_name}-{date_time}.pkl"
+        )
         save_to = os.path.join(file_path, file_name)
         with open(save_to, "wb") as f:
             pickle.dump(self.trained_model, f)
             self.logger.info(f"Model has been saved to {save_to}")
-

@@ -5,7 +5,9 @@ from logger import Logger
 
 
 class CassandraInterface(object):
-    def __init__(self, ip_address, port=9042, key_space=None, table_name=None, table_schema=None):
+    def __init__(
+        self, ip_address, port=9042, key_space=None, table_name=None, table_schema=None
+    ):
         self.ip_address = ip_address if isinstance(ip_address, list) else [ip_address]
         self.port = port
         self.key_space = key_space
@@ -65,7 +67,7 @@ class CassandraInterface(object):
         return self.session
 
     def retrieve_with_timestamps(
-            self, start_timestamp, end_timestamp, remove_tzinfo=True, time_column="key"
+        self, start_timestamp, end_timestamp, remove_tzinfo=True, time_column="key"
     ):
         """
         Make a cql selection query in the cassandra
@@ -136,7 +138,7 @@ class CassandraInterface(object):
             self.logger.error("Column(s) do not match the give table schema")
             raise ValueError("Column(s) do not match the give table schema")
 
-        col_names = ', '.join(predictions_df.columns)
+        col_names = ", ".join(predictions_df.columns)
         query = f"INSERT INTO {self.table_name}({col_names}) VALUES ({', '.join(['?'] * len(predictions_df.columns))});"
         prepared_query = session.prepare(query)
         for row in predictions_df.iterrows():
@@ -178,7 +180,7 @@ class CassandraInterface(object):
         )
         # Add which keys are primary keys to the schema string
         add_primary_keys = (
-                schema_string + f", PRIMARY KEY ({', '.join(list(primary_key_cols))})"
+            schema_string + f", PRIMARY KEY ({', '.join(list(primary_key_cols))})"
         )
         query = f"CREATE TABLE IF NOT EXISTS {new_table_name} ({add_primary_keys})"
         self.connect_to_db().execute(query)
