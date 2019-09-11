@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 import pandas as pd
 from cassandra.cluster import Cluster
 
@@ -7,12 +5,13 @@ from logger import Logger
 
 
 class CassandraInterface(object):
-    def __init__(self, ip_address, port=9042, key_space=None, table_name=None):
+    def __init__(self, ip_address, port=9042, key_space=None, table_name=None, table_schema=None):
         self.ip_address = ip_address if isinstance(ip_address, list) else [ip_address]
         self.port = port
         self.key_space = key_space
         self.key_space_changed = False
         self.table_name = table_name
+        self.table_schema = None
         self.session = None
 
         self.logger = Logger(self.__class__.__name__).get()
@@ -28,11 +27,19 @@ class CassandraInterface(object):
 
     @property
     def table_name(self):
-        return self.__key_space
+        return self.__table_name
 
     @table_name.setter
     def table_name(self, table_name):
         self.__table_name = table_name
+
+    @property
+    def table_schema(self):
+        return self.table_schema
+
+    @table_schema.setter
+    def table_schema(self, table_schema):
+        self.__table_schema = table_schema
 
     def _connect_to_db(self):
         """
@@ -58,7 +65,7 @@ class CassandraInterface(object):
         return self.session
 
     def retrieve_with_timestamps(
-        self, start_timestamp, end_timestamp, remove_tzinfo=True, time_column="key"
+            self, start_timestamp, end_timestamp, remove_tzinfo=True, time_column="key"
     ):
         """
         Make a cql selection query in the cassandra
@@ -113,20 +120,28 @@ class CassandraInterface(object):
     def write_rows_complete(self):
         pass
 
-    def write_rows_from_timestamp(self, start_timestamp, pred_steps_seconds, predictions):
+    def write_rows_from_timestamp(self, predictions_df):
         """
         Writes rows to Cassandra DB
-        :param start_timestamp:
-        :param pred_steps_seconds:
-        :param predictions: Predictions from the forecasting engine
+        :param predictions_df: Predictions with timestamp and identifiers
+        :param table_schema: Schema of the Cassandra Table
         :return: None
         """
         session = self.connect_to_db()
-        for i in range(pred_steps_seconds):
-            session.execute(
-                f"INSERT INTO {self.table_name} (key, value) VALUES"
-                f" ('{start_timestamp + timedelta(seconds=i)}', {predictions[i]});"
-            )
+
+        if not self.table_schema:
+            self.logger.error("Writing initiated without table schema")
+            raise ValueError("Please set the table schema")
+        if set(predictions_df.columns) != set(self.table_schema.keys()):
+            self.logger.error("Column(s) do not match the give table schema")
+            raise ValueError("Column(s) do not match the give table schema")
+
+        col_names = ', '.join(predictions_df.columns)
+        query = f"INSERT INTO {self.table_name}({col_names}) VALUES ({', '.join(['?'] * len(predictions_df.columns))});"
+        prepared_query = session.prepare(query)
+        for row in predictions_df.iterrows():
+            row = row[1]
+            session.execute(prepared_query, row.values.tolist())
 
     def _create_key_space(self, new_key_space_name, config_dict=None):
         if not config_dict:
@@ -163,7 +178,7 @@ class CassandraInterface(object):
         )
         # Add which keys are primary keys to the schema string
         add_primary_keys = (
-            schema_string + f", PRIMARY KEY ({', '.join(list(primary_key_cols))})"
+                schema_string + f", PRIMARY KEY ({', '.join(list(primary_key_cols))})"
         )
         query = f"CREATE TABLE IF NOT EXISTS {new_table_name} ({add_primary_keys})"
         self.connect_to_db().execute(query)
