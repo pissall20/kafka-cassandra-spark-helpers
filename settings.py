@@ -12,3 +12,9 @@ TIME_COLUMN = "key"
 
 MODEL_LOCATION = "models/"
 MODEL_ARCHIVE = "archive/"
+
+TABLE_SCHEMA = {
+    'id': 'text',
+    'key': 'timestamp',
+    'value': 'double'
+}
