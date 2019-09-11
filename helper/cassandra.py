@@ -13,7 +13,7 @@ class CassandraInterface(object):
         self.key_space = key_space
         self.key_space_changed = False
         self.table_name = table_name
-        self.table_schema = None
+        self.table_schema = table_schema
         self.session = None
 
         self.logger = Logger(self.__class__.__name__).get()
