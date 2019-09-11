@@ -119,14 +119,10 @@ class CassandraInterface(object):
         """
         return df[time_column].max().replace(tzinfo=None)
 
-    def write_rows_complete(self):
-        pass
-
-    def write_rows_from_timestamp(self, predictions_df):
+    def write_rows(self, predictions_df):
         """
         Writes rows to Cassandra DB
         :param predictions_df: Predictions with timestamp and identifiers
-        :param table_schema: Schema of the Cassandra Table
         :return: None
         """
         session = self.connect_to_db()
