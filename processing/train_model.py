@@ -57,12 +57,12 @@ class ModelTrainer(object):
         predictions, best_model_name, best_mape = self.get_best_forecast(df, kpi_column)
         self.save_model(settings.MODEL_LOCATION, best_model_name)
 
-    def save_model(self, file_path, model_name):
+    def save_model(self, file_path, model_name, id_prefix=None):
         if not self.trained_model:
             self.logger.error('The model has not been trained to be saved.')
             raise ValueError("The model has not been trained to be saved.")
         date_time = datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
-        file_name = f"{model_name}-{date_time}.pkl"
+        file_name = f"{(str(id_prefix) + '-') if id_prefix else ''}{model_name}-{date_time}.pkl"
         save_to = os.path.join(file_path, file_name)
         with open(save_to, "wb") as f:
             pickle.dump(self.trained_model, f)
