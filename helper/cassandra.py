@@ -81,6 +81,7 @@ class CassandraInterface(object):
         if remove_tzinfo:
             df[time_column] = df[time_column].replace(tzinfo=None)
         df.sort_values(by=[time_column], inplace=True)
+        self.logger.info(f"Extracted data from {start_timestamp} to {end_timestamp}")
         return df
 
     def get_initial_data(self, time_column="key"):
@@ -96,6 +97,7 @@ class CassandraInterface(object):
             raise ValueError("No rows were returned from the database")
         df = pd.DataFrame(list(rows))
         max_time_stamp = self.get_last_timestamp(df, time_column=time_column)
+        self.logger.info(f"Extracted all data till {max_time_stamp}")
         return df, max_time_stamp
 
     @staticmethod
@@ -145,7 +147,7 @@ class CassandraInterface(object):
     def _drop_key_space(self, key_space_name):
         if self.key_space == key_space_name:
             raise ValueError(
-                "Keyspace {key_space_name} is in use. Please set it to `None` before trying to drop it."
+                f"Keyspace {key_space_name} is in use. Please set it to `None` before trying to drop it."
             )
         query = f"DROP KEYSPACE {key_space_name};"
         self.connect_to_db().execute(query)
@@ -165,4 +167,4 @@ class CassandraInterface(object):
         )
         query = f"CREATE TABLE IF NOT EXISTS {new_table_name} ({add_primary_keys})"
         self.connect_to_db().execute(query)
-        self.logger.info(f"Successfully dropped table {new_table_name}")
+        self.logger.info(f"Successfully created table {new_table_name}")
