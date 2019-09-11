@@ -25,6 +25,7 @@ class ModelTrainer(object):
             settings.CASSANDRA_PORT,
             settings.CASSANDRA_KEY_SPACE,
             settings.CASSANDRA_TABLE_NAME,
+            settings.TABLE_SCHEMA
         )
 
         self.last_timestamp = None
