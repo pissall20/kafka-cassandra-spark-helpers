@@ -50,4 +50,4 @@ if __name__ == "__main__":
 
     for row in df.iterrows():
         row = row[1]
-        cql_connect.session.execute(prepared_query, [row.id, row.key, row.value])
+        cql_connect.session.execute(prepared_query, row.values.tolist())
