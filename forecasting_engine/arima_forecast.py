@@ -51,8 +51,6 @@ class Arima(object):
             TrainTestData[3]["Arima"] = forecasting_result(
                 arima_mape, arima_rmse, best_cfg, best_model
             )
-        else:
-            print("in final forecasting init:obj  ")
 
     def _apply_arima(self, arima_order):
         """
