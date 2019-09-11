@@ -20,7 +20,7 @@ class ModelTrainer(object):
 
         self.logger = Logger(self.__class__.__name__).get()
 
-    def load_initial_data(self):
+    def _load_initial_data(self):
         cql_connect = CassandraInterface(
             settings.CASSANDRA_IP,
             settings.CASSANDRA_PORT,
@@ -44,7 +44,7 @@ class ModelTrainer(object):
         return predictions, best_model_name, best_mape
 
     def initial_training(self, kpi_column):
-        df = self.load_initial_data()
+        df = self._load_initial_data()
         predictions, best_model_name, best_mape = self.get_best_forecast(df, kpi_column)
 
     def save_model(self, file_path, model_name):
