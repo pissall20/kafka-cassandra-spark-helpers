@@ -20,19 +20,28 @@ class ModelTrainer(object):
 
         self.logger = Logger(self.__class__.__name__).get()
 
-    def _load_initial_data(self):
-        cql_connect = CassandraInterface(
+        self.cql_connect = CassandraInterface(
             settings.CASSANDRA_IP,
             settings.CASSANDRA_PORT,
             settings.CASSANDRA_KEY_SPACE,
             settings.CASSANDRA_TABLE_NAME,
         )
-        last_time_stamp = cql_connect.get_last_timestamp()
-        start_time_stamp = last_time_stamp - datetime.timedelta(
-            seconds=self.pred_steps_seconds
-        )
-        data = cql_connect.retrieve_with_timestamps(start_time_stamp, last_time_stamp)
-        return data
+
+        self.last_timestamp = None
+
+    def _load_all_data(self):
+        initial_data, max_time_stamp = self.cql_connect.get_initial_data(time_column=settings.TIME_COLUMN)
+        self.last_timestamp = max_time_stamp
+        return initial_data
+
+    # @TODO First focus on training initial model
+    # def _load_current_data(self, last_timestamp=None):
+    #     end_time_stamp = self.last_timestamp + datetime.timedelta(
+    #         seconds=self.pred_steps_seconds
+    #     )
+    #     data = self.cql_connect.retrieve_with_timestamps(self.last_timestamp, end_time_stamp)
+    #     self.last_timestamp = end_time_stamp
+    #     return data
 
     def get_best_forecast(self, data, kpi_column, split_ratio=0.1):
         available_models = BestForecast.get_models()
@@ -44,8 +53,9 @@ class ModelTrainer(object):
         return predictions, best_model_name, best_mape
 
     def initial_training(self, kpi_column):
-        df = self._load_initial_data()
+        df = self._load_all_data()
         predictions, best_model_name, best_mape = self.get_best_forecast(df, kpi_column)
+        self.save_model(settings.MODEL_LOCATION, best_model_name)
 
     def save_model(self, file_path, model_name):
         if not self.trained_model:
