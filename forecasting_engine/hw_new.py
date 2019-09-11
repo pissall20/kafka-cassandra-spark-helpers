@@ -15,12 +15,12 @@ class HoltWinters_new(object):
     # scaling_factor - sets the width of the confidence interval by Brutlag (usually takes values from 2 to 3)
     """
 
-    def __init__(self, best_configuration_found=0, time_series=[], pred_steps=2):
+    def __init__(self, best_configuration_found=0, time_series=None, pred_steps=2):
         print("Inside new hw")
         # super(HoltWinters_new, self).__init__()    #super removed to implement mp
 
         self.best_configuration_found = best_configuration_found
-        self.time_series = time_series
+        self.time_series = [] if not time_series else time_series
         self.pred_steps = pred_steps
         self.train_ts = np.zeros(1)
         self.test_ts = np.zeros(1)
@@ -30,7 +30,7 @@ class HoltWinters_new(object):
         self.test_ts = TrainTestData[1]
         self.time_series = TrainTestData[2]
         if self.best_configuration_found == 1:
-            self.train_ts = time_series
+            self.train_ts = self.time_series
 
         elif self.best_configuration_found == 0:
             self.slen = 1
