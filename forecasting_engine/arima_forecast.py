@@ -65,17 +65,17 @@ class Arima(object):
 
         train, test = self.train_ts, self.test_ts
 
+        model = ARIMA(train, order=arima_order)
+
         if len(train) < 7:
             print("ValueError: Insufficient degrees of freedom to estimate")
-            return 969696.96, 969696.96, arima_order
-
-        model = ARIMA(train, order=arima_order)
+            return 969696.96, 969696.96, arima_order, model
 
         try:
             model_fit = model.fit(disp=0)
         except:
             print("SVD did not converge in finding out best mape")
-            return 969696.96, 969696.96, arima_order
+            return 969696.96, 969696.96, arima_order, model
 
         yhat = model_fit.forecast(len(test))[0]
         mape_error = mape(test, yhat)
