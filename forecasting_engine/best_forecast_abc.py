@@ -37,12 +37,6 @@ class BestForecastInterface:
         """
 
     @abstractmethod
-    def get_best_mape(self):
-        """
-        Returns the value for the best mape out of all the forecasting models
-        """
-
-    @abstractmethod
     def best_model(self):
         """
         Returns the best model instance out of all the forecasting models

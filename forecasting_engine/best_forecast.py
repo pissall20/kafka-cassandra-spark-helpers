@@ -1,20 +1,10 @@
 # coding=utf-8
-import pandas as pd
+import sys
+import time
+
 from forecasting_engine.best_forecast_abc import BestForecastInterface
 from forecasting_engine.data_process import DataProcessing
 from forecasting_engine.independent_models import TimeSeriesIndependent
-import time
-import operator
-import numpy as np
-import sys
-from forecasting_engine.holtwinters_forecast import HoltWinters
-from forecasting_engine.arima_forecast import Arima
-from forecasting_engine.auto_arima import Auto_Arima
-from forecasting_engine.hw_new import HoltWinters_new
-from forecasting_engine.kalman_filter import LocalLinearTrend
-from forecasting_engine.lstm_forecast import Lstm
-from forecasting_engine.weighted_MA import weighted_moving_average
-
 
 start = time.time()
 
@@ -119,12 +109,6 @@ class BestForecast(BestForecastInterface):
 
         print("best model :" + best_model)
         return forecasted_values, best_model, best_mape
-
-    def get_best_mape(self):
-        """
-        :return: Best mape among all the models
-        """
-        return self.best_mape
 
     def best_model(self):
         """
