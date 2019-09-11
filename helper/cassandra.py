@@ -83,20 +83,35 @@ class CassandraInterface(object):
         df.sort_values(by=[time_column], inplace=True)
         return df
 
-    def get_last_timestamp(self, time_column="key"):
+    def get_initial_data(self, time_column="key"):
         """
-        Get the last timestamp existing in the database
-        :param time_column: Name of the datetime column
-        :return: max(date_index)
+        Gets all initial data for training time series models on
+        :param time_column: Name of the time column
+        :return df: pd.DataFrame() of the Cassandra DB table,
+        :return max_time_stamp: Last time stamp of the dataframe
         """
         session = self.connect_to_db()
-        rows = session.execute(f"SELECT * FROM {self.table_name};")
+        rows = session.execute(f"SELECT * FROM {self.table_name}")
         if not rows:
             raise ValueError("No rows were returned from the database")
         df = pd.DataFrame(list(rows))
+        max_time_stamp = self.get_last_timestamp(df, time_column=time_column)
+        return df, max_time_stamp
+
+    @staticmethod
+    def get_last_timestamp(df, time_column="key"):
+        """
+        Get the last timestamp existing in the database
+        :param df: Dataframe from which last timestamp is to be extracted
+        :param time_column: Name of the datetime column
+        :return: max(date_index)
+        """
         return df[time_column].max().replace(tzinfo=None)
 
-    def write_rows(self, start_timestamp, pred_steps_seconds, predictions):
+    def write_rows_complete(self):
+        pass
+
+    def write_rows_from_timestamp(self, start_timestamp, pred_steps_seconds, predictions):
         """
         Writes rows to Cassandra DB
         :param start_timestamp:
@@ -148,6 +163,6 @@ class CassandraInterface(object):
         add_primary_keys = (
             schema_string + f", PRIMARY KEY ({', '.join(list(primary_key_cols))})"
         )
-        query = f"CREATE TABLE {new_table_name} ({add_primary_keys})"
+        query = f"CREATE TABLE IF NOT EXISTS {new_table_name} ({add_primary_keys})"
         self.connect_to_db().execute(query)
         self.logger.info(f"Successfully dropped table {new_table_name}")
