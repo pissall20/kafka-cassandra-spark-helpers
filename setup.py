@@ -13,9 +13,10 @@ def create_random_data():
     second_id_suffix = "sensor_"
 
     # Define a date range
-    start_time, end_time = pd.to_datetime("2018-12-30"), pd.to_datetime("2018-12-31")
+    start_time, end_time = pd.to_datetime("2018-12-31 00:00:00"), pd.to_datetime("2018-12-31 01:00:00")
     date_range = pd.date_range(start_time, end_time, freq="S")
     rows_per_id = len(date_range)
+    print(f"Number of rows per unique combination: {rows_per_id}")
 
     # 10 unique ID's
     ids = range(1, 11)
@@ -49,6 +50,7 @@ if __name__ == "__main__":
     col_names = ", ".join(df.columns)
     query = f"INSERT INTO {new_table}({col_names}) VALUES ({', '.join(['?'] * len(df.columns))});"
     prepared_query = cql_connect.session.prepare(query)
+    print(f"Inserting {len(df)} rows")
 
     for row in df.iterrows():
         row = row[1]
