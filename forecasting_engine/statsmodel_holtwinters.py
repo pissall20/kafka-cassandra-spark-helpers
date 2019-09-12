@@ -13,13 +13,11 @@ Author: Terence L van Zyl
 
 """
 import numpy as np
-
+from scipy.optimize import basinhopping, brute, minimize
+from scipy.spatial.distance import sqeuclidean
 from statsmodels.base.model import Results
 from statsmodels.base.wrapper import populate_wrapper, union_dicts, ResultsWrapper
 from statsmodels.tsa.base.tsa_model import TimeSeriesModel
-
-from scipy.optimize import basinhopping, brute, minimize
-from scipy.spatial.distance import sqeuclidean
 
 try:
     from scipy.special import inv_boxcox

@@ -1,9 +1,9 @@
-from scipy.optimize import minimize
 import numpy as np
-from forecasting_engine.error_metrics import rmse, mape
-from forecasting_engine.data_classes import forecasting_result
+from scipy.optimize import minimize
 from sklearn.model_selection import TimeSeriesSplit
 
+from forecasting_engine.data_classes import forecasting_result
+from forecasting_engine.error_metrics import rmse, mape
 from logger import Logger
 
 

@@ -5,7 +5,6 @@ import time
 from forecasting_engine.best_forecast_abc import BestForecastInterface
 from forecasting_engine.data_process import DataProcessing
 from forecasting_engine.independent_models import TimeSeriesIndependent
-
 from logger import Logger
 
 start = time.time()

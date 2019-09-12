@@ -1,13 +1,13 @@
-import pandas as pd
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
-from keras.models import Sequential
+import pandas as pd
 from keras.layers import Dense
 from keras.layers import LSTM
+from keras.models import Sequential
 from numpy import array
-from forecasting_engine.error_metrics import mape, rmse
-from forecasting_engine.data_classes import forecasting_result
+from sklearn.preprocessing import MinMaxScaler
 
+from forecasting_engine.data_classes import forecasting_result
+from forecasting_engine.error_metrics import mape, rmse
 from logger import Logger
 
 
