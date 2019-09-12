@@ -43,7 +43,7 @@ if __name__ == "__main__":
     cql_connect._create_table(
         new_table,
         schema=new_table_schema,
-        primary_key_cols=["key"],
+        primary_key_cols=[col for col in new_table_schema.keys() if col != "values"],
     )
 
     df = create_random_data()
