@@ -8,6 +8,8 @@ from forecasting_engine.kalman_filter import LocalLinearTrend
 from forecasting_engine.lstm_forecast import Lstm
 from forecasting_engine.weighted_MA import weighted_moving_average
 
+from logger import Logger
+
 
 class TimeSeriesIndependent:
     """
@@ -41,7 +43,9 @@ class TimeSeriesIndependent:
         Map each model call with an object of Process class.
         """
 
-        print("Inside TimeSeriesIndependent init")
+        self.logger = Logger(self.__class__.__name__).get()
+
+        self.logger.info("Inside TimeSeriesIndependent init")
 
         self.time_series = time_series
         self.train_ts = train_ts

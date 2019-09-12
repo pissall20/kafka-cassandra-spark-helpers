@@ -8,6 +8,8 @@ from numpy import array
 from forecasting_engine.error_metrics import mape, rmse
 from forecasting_engine.data_classes import forecasting_result
 
+from logger import Logger
+
 
 class Lstm(object):
     def __init__(
@@ -21,7 +23,11 @@ class Lstm(object):
         time_series=[],
         pred_steps=2,
     ):
-        print("inside new lstm class :")
+
+        self.logger = Logger(self.__class__.__name__).get()
+
+        self.logger.info("inside new lstm class :")
+
         # super(Lstm, self).__init__()   #super removed to implement mp
 
         # configure
@@ -87,7 +93,7 @@ class Lstm(object):
 
     # transform series into train and test sets for supervised learning
     def prepare_dataset(self):
-        print("inside prepare data :")
+        self.logger.info("inside prepare data :")
 
         # extract raw values
         raw_values = self.time_series
@@ -222,7 +228,7 @@ class Lstm(object):
         return np.mean(mape_vals), np.mean(rmse_vals)
 
     def get_forecast(self, pred_steps, time_series, best_cfg):
-        print("in get_forecast of lstm_new :")
+        self.logger.info("in get_forecast of lstm_new :")
 
         self.best_configuration_found = 1
         self.n_seq = pred_steps

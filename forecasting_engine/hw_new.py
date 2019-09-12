@@ -4,6 +4,8 @@ from forecasting_engine.error_metrics import rmse, mape
 from forecasting_engine.data_classes import forecasting_result
 from sklearn.model_selection import TimeSeriesSplit
 
+from logger import Logger
+
 
 class HoltWinters_new(object):
     """
@@ -16,7 +18,11 @@ class HoltWinters_new(object):
     """
 
     def __init__(self, best_configuration_found=0, time_series=None, pred_steps=2):
-        print("Inside new hw")
+
+        self.logger = Logger(self.__class__.__name__).get()
+
+        self.logger.info("Inside new hw")
+
         # super(HoltWinters_new, self).__init__()    #super removed to implement mp
 
         self.best_configuration_found = best_configuration_found

@@ -4,6 +4,7 @@ from forecasting_engine.error_metrics import rmse, mape
 from forecasting_engine.data_classes import forecasting_result
 import math
 import numpy as np
+from logger import Logger
 
 
 class HoltWinters(object):
@@ -30,7 +31,9 @@ class HoltWinters(object):
         self.train_ts = np.zeros(1)
         self.test_ts = np.zeros(1)
 
-        print("Inside HoltWinters init")
+        self.logger = Logger(self.__class__.__name__).get()
+
+        self.logger.info("Inside HoltWinters init")
 
     def apply_model(self, TrainTestData):
         if self.best_configuration_found == 0:
@@ -48,7 +51,7 @@ class HoltWinters(object):
                     holtwinters_mape, holtwinters_rmse, best_trend, self
                 )
             else:
-                print("QC failed for HoltWinters")
+                self.logger.info("QC failed for HoltWinters")
                 pass
 
     def _quality_check(self):

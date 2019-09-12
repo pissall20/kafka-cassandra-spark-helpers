@@ -5,6 +5,7 @@ from statsmodels.tsa.arima_model import ARIMA
 from forecasting_engine.error_metrics import rmse, mape
 from forecasting_engine.data_classes import forecasting_result
 import numpy as np
+from logger import Logger
 
 
 class Arima(object):
@@ -34,7 +35,9 @@ class Arima(object):
         self.train_ts = np.zeros(1)
         self.test_ts = np.zeros(1)
 
-        print("Inside Arima's init")
+        self.logger = Logger(self.__class__.__name__).get()
+
+        self.logger.info("Inside Arima's init")
         # super(Arima, self).__init__()  #super removed to implement mp
 
     def apply_model(self, TrainTestData):
@@ -66,13 +69,13 @@ class Arima(object):
         model = ARIMA(train, order=arima_order)
 
         if len(train) < 7:
-            print("ValueError: Insufficient degrees of freedom to estimate")
+            self.logger.error("ValueError: Insufficient degrees of freedom to estimate")
             return 969696.96, 969696.96, arima_order, model
 
         try:
             model_fit = model.fit(disp=0)
         except:
-            print("SVD did not converge in finding out best mape")
+            self.logger.info("SVD did not converge in finding out best mape")
             return 969696.96, 969696.96, arima_order, model
 
         yhat = model_fit.forecast(len(test))[0]
@@ -109,7 +112,7 @@ class Arima(object):
             try:
                 model_fit = model.fit(disp=0)
             except:
-                print("SVD did not converge in arima while forecasting future")
+                self.logger.info("SVD did not converge in arima while forecasting future")
                 val = np.mean(time_series[-(len(time_series) - 5) :])
                 yhat = [val] * pred_steps
                 return yhat

@@ -6,6 +6,8 @@ from forecasting_engine.best_forecast_abc import BestForecastInterface
 from forecasting_engine.data_process import DataProcessing
 from forecasting_engine.independent_models import TimeSeriesIndependent
 
+from logger import Logger
+
 start = time.time()
 
 
@@ -17,7 +19,9 @@ class BestForecast(BestForecastInterface):
 
     def __init__(self):
 
-        print("Inside best forecast init")
+        self.logger = Logger(self.__class__.__name__).get()
+
+        self.logger.info("Inside best forecast init")
 
         self.forecasting_results = dict()
         self.best_model_instance = None
@@ -80,8 +84,7 @@ class BestForecast(BestForecastInterface):
         )
 
         # self.forecasting results has algorithm's name as key and [mape,rmse,forecasts] as value
-        print("forecasting_values_results : ")
-        print(self.forecasting_results)
+        self.logger.info(f"forecasting_values_results : {self.forecasting_results}")
 
         # Getting best model from the key(algorithm name) w.r.t. to the lowest mape value
         # best_of_all = sorted(self.forecasting_results.items(), key=operator.itemgetter(1))
@@ -93,21 +96,19 @@ class BestForecast(BestForecastInterface):
             best_of_all = sorted(
                 self.forecasting_results.items(), key=lambda x: x[1].rmse
             )[0]
-        print("best  :")
-        print(best_of_all)
+        self.logger.info(f"best : {best_of_all}")
         best_model = best_of_all[0]
         best_mape = best_of_all[1].mape
         best_rmse = best_of_all[1].rmse
         best_model_cfg = best_of_all[1].cfg
         best_model_instance = best_of_all[1].instance
-        print("best model for the time series is  : " + best_model)
 
         best_model_class_obj = getattr(sys.modules[__name__], best_model)()
         forecasted_values = best_model_class_obj.get_forecast(
             pred_steps, time_series, best_model_cfg
         )
 
-        print("best model :" + best_model)
+        self.logger.info(f"best model : {best_model}")
         return forecasted_values, best_model, best_mape
 
     def best_model(self):
