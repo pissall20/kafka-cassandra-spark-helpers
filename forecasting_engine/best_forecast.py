@@ -23,7 +23,6 @@ class BestForecast(BestForecastInterface):
         self.logger.info("Inside best forecast init")
 
         self.forecasting_results = dict()
-        self.best_model_instance = None
 
     def data_preprocessing(self, time_series, split_ratio):
         """
@@ -56,7 +55,7 @@ class BestForecast(BestForecastInterface):
 
         return forecasting_results
 
-    def get_best_forecast(
+    def get_best_model(
         self,
         time_series,
         pred_steps,
@@ -102,6 +101,9 @@ class BestForecast(BestForecastInterface):
         best_model_cfg = best_of_all[1].cfg
         best_model_instance = best_of_all[1].instance
 
+        return best_model_instance, best_model
+
+        """
         best_model_class_obj = getattr(sys.modules[__name__], best_model)()
         forecasted_values = best_model_class_obj.get_forecast(
             pred_steps, time_series, best_model_cfg
@@ -109,9 +111,5 @@ class BestForecast(BestForecastInterface):
 
         self.logger.info(f"best model : {best_model}")
         return forecasted_values, best_model, best_mape
+        """
 
-    def best_model(self):
-        """
-        :return: Best model instance based on rmse
-        """
-        return self.best_model_instance

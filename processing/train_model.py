@@ -1,6 +1,7 @@
 import datetime
 import os
 import pickle
+import pandas as pd
 
 import settings
 from forecasting_engine.best_forecast import BestForecast
@@ -16,7 +17,6 @@ class ModelTrainer(object):
     def __init__(self, initial_n_train, pred_steps_seconds):
         self.initial_train = initial_n_train
         self.pred_steps_seconds = pred_steps_seconds
-        self.trained_model = None
 
         self.logger = Logger(self.__class__.__name__).get()
 
@@ -46,23 +46,32 @@ class ModelTrainer(object):
     #     self.last_timestamp = end_time_stamp
     #     return data
 
-    def get_best_forecast(self, data, kpi_column, split_ratio=0.1):
+    def save_best_model(self, data, split_ratio=0.1):
         available_models = BestForecast.get_models()
         best_forecast_obj = BestForecast()
-        predictions, best_model_name, best_mape, best_model_obj = best_forecast_obj.get_best_forecast(
-            data[kpi_column], self.pred_steps_seconds, available_models, split_ratio
+        best_model_obj, best_model_name = best_forecast_obj.get_best_model(
+            data[settings.VALUE_COLUMN],
+            self.pred_steps_seconds,
+            available_models,
+            split_ratio,
         )
         self.logger.info(f"Best Model selected: {best_model_name}")
-        self.trained_model = best_model_obj
-        return predictions, best_model_name, best_mape
+        location = self.save_model(
+            settings.MODEL_LOCATION, best_model_name, best_model_obj
+        )
+
+        row = pd.DataFrame(
+            list([data[settings.IDENTIFIER_GROUP][0], best_model_name, location])
+        )
+
+        return row
 
     def initial_training(self, kpi_column):
         df = self._load_all_data()
-        predictions, best_model_name, best_mape = self.get_best_forecast(df, kpi_column)
-        self.save_model(settings.MODEL_LOCATION, best_model_name)
+        row = df.groupby(settings.IDENTIFIER_GROUP).apply(save_best_model)
 
-    def save_model(self, file_path, model_name, id_prefix=None):
-        if not self.trained_model:
+    def save_model(self, file_path, model_name, best_model_obj=None, id_prefix=None):
+        if not best_model_obj:
             self.logger.error("The model has not been trained to be saved.")
             raise ValueError("The model has not been trained to be saved.")
         date_time = datetime.datetime.today().strftime("%Y-%m-%d-%H:%M:%S")
@@ -71,8 +80,9 @@ class ModelTrainer(object):
         )
         save_to = os.path.join(file_path, file_name)
         with open(save_to, "wb") as f:
-            pickle.dump(self.trained_model, f)
+            pickle.dump(best_model_obj, f)
             self.logger.info(f"Model has been saved to {save_to}")
+        return save_to
 
 
 abc = ModelTrainer(1200, 12)

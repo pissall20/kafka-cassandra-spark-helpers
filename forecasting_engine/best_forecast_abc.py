@@ -27,17 +27,11 @@ class BestForecastInterface:
         """
 
     @abstractmethod
-    def get_best_forecast(
+    def get_best_model(
         self, time_series, pred_steps, forecasting_models, split_ratio
     ):
         """
         Calls data_preprocessing and get_forecasts_from_all_models methods and
-        returns the best forecasted values based on the mape values returned
-        from all the models
-        """
-
-    @abstractmethod
-    def best_model(self):
-        """
-        Returns the best model instance out of all the forecasting models
+        returns the best model based on the mape values received from all the
+        models
         """
