@@ -114,7 +114,9 @@ class Arima(object):
             try:
                 model_fit = model.fit(disp=0)
             except:
-                self.logger.info("SVD did not converge in arima while forecasting future")
+                self.logger.info(
+                    "SVD did not converge in arima while forecasting future"
+                )
                 val = np.mean(time_series[-(len(time_series) - 5) :])
                 yhat = [val] * pred_steps
                 return yhat

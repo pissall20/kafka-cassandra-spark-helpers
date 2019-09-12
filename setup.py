@@ -13,7 +13,10 @@ def create_random_data():
     second_id_suffix = "sensor_"
 
     # Define a date range
-    start_time, end_time = pd.to_datetime("2018-12-31 00:00:00"), pd.to_datetime("2018-12-31 01:00:00")
+    start_time, end_time = (
+        pd.to_datetime("2018-12-31 00:00:00"),
+        pd.to_datetime("2018-12-31 01:00:00"),
+    )
     date_range = pd.date_range(start_time, end_time, freq="S")
     rows_per_id = len(date_range)
     print(f"Number of rows per unique combination: {rows_per_id}")
@@ -36,7 +39,10 @@ def create_random_data():
 
 if __name__ == "__main__":
     cql_connect = CassandraInterface(settings.CASSANDRA_IP, settings.CASSANDRA_PORT)
-    new_keyspace, new_table = settings.CASSANDRA_KEY_SPACE, settings.CASSANDRA_TABLE_NAME
+    new_keyspace, new_table = (
+        settings.CASSANDRA_KEY_SPACE,
+        settings.CASSANDRA_TABLE_NAME,
+    )
     cql_connect._create_key_space(new_keyspace)
     cql_connect.key_space = new_keyspace
 

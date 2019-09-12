@@ -13,4 +13,9 @@ TIME_COLUMN = "key"
 MODEL_LOCATION = "models/"
 MODEL_ARCHIVE = "archive/"
 
-TABLE_SCHEMA = {"primary_id": "text", "secondary_id": "text", "key": "timestamp", "value": "double"}
+TABLE_SCHEMA = {
+    "primary_id": "text",
+    "secondary_id": "text",
+    "key": "timestamp",
+    "value": "double",
+}

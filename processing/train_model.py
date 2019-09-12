@@ -73,3 +73,6 @@ class ModelTrainer(object):
         with open(save_to, "wb") as f:
             pickle.dump(self.trained_model, f)
             self.logger.info(f"Model has been saved to {save_to}")
+
+
+abc = ModelTrainer(1200, 12)
