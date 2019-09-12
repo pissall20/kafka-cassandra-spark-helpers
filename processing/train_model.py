@@ -24,8 +24,6 @@ class ModelTrainer(object):
             settings.CASSANDRA_IP,
             settings.CASSANDRA_PORT,
             settings.CASSANDRA_KEY_SPACE,
-            settings.CASSANDRA_TABLE_NAME,
-            settings.TABLE_SCHEMA,
         )
 
         self.last_timestamp = None
@@ -66,9 +64,10 @@ class ModelTrainer(object):
 
         return row
 
-    def initial_training(self, kpi_column):
+    def initial_training(self):
         df = self._load_all_data()
-        row = df.groupby(settings.IDENTIFIER_GROUP).apply(save_best_model)
+        row = df.groupby(settings.IDENTIFIER_GROUP).apply(self.save_best_model)
+        self.cql_connect.write_rows(row, "model_history", settings.MODEL_HISTORY_SCHEMA)
 
     def save_model(self, file_path, model_name, best_model_obj=None, id_prefix=None):
         if not best_model_obj:
@@ -83,6 +82,3 @@ class ModelTrainer(object):
             pickle.dump(best_model_obj, f)
             self.logger.info(f"Model has been saved to {save_to}")
         return save_to
-
-
-abc = ModelTrainer(1200, 12)

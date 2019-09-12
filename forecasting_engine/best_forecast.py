@@ -112,4 +112,3 @@ class BestForecast(BestForecastInterface):
         self.logger.info(f"best model : {best_model}")
         return forecasted_values, best_model, best_mape
         """
-
