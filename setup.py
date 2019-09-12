@@ -15,7 +15,7 @@ def create_random_data():
     # Define a date range
     start_time, end_time = (
         pd.to_datetime("2018-12-31 00:00:00"),
-        pd.to_datetime("2018-12-31 01:00:00"),
+        pd.to_datetime("2018-12-31 00:10:00"),
     )
     date_range = pd.date_range(start_time, end_time, freq="S")
     rows_per_id = len(date_range)
@@ -46,18 +46,19 @@ if __name__ == "__main__":
     cql_connect._create_key_space(new_keyspace)
     cql_connect.key_space = new_keyspace
 
+    # Create real values table
     cql_connect._create_table(
         new_table,
         schema=new_table_schema,
-        primary_key_cols=[col for col in new_table_schema.keys() if col != "values"],
+        primary_key_cols=[col for col in new_table_schema.keys() if col != "value"],
+    )
+    # Create table to store model information, as to which model was in use at what time
+    cql_connect._create_table(
+        "model_history",
+        settings.MODEL_HISTORY_SCHEMA,
+        primary_key_cols=settings.IDENTIFIER_GROUP,
     )
 
     df = create_random_data()
-    col_names = ", ".join(df.columns)
-    query = f"INSERT INTO {new_table}({col_names}) VALUES ({', '.join(['?'] * len(df.columns))});"
-    prepared_query = cql_connect.session.prepare(query)
+    cql_connect.write_rows(df, settings.CASSANDRA_TABLE_NAME, settings.TABLE_SCHEMA)
     print(f"Inserting {len(df)} rows")
-
-    for row in df.iterrows():
-        row = row[1]
-        cql_connect.session.execute(prepared_query, row.values.tolist())

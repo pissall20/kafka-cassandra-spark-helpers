@@ -1,4 +1,5 @@
 import os
+
 # Settings
 
 CASSANDRA_IP = "127.0.0.1"
@@ -10,7 +11,7 @@ INITIAL_TRAINING_POINTS = 1500
 PREDICTION_STEPS_IN_SECONDS = 12
 
 MODEL_LOCATION = "models/"
-MODEL_ARCHIVE = os.path.join(MODEL_LOCATION, 'archive')
+MODEL_ARCHIVE = os.path.join(MODEL_LOCATION, "archive")
 
 TABLE_SCHEMA = {
     "primary_id": "text",
@@ -22,3 +23,12 @@ TABLE_SCHEMA = {
 TIME_COLUMN = "key"
 VALUE_COLUMN = "value"
 IDENTIFIER_GROUP = ["primary_id", "secondary_id"]
+
+MODEL_HISTORY_SCHEMA = {
+    **{"model_name": "text", "model_file": "text", "time": "timestamp"},
+    **{
+        col: col_type
+        for col, col_type in TABLE_SCHEMA.items()
+        if col in IDENTIFIER_GROUP
+    },
+}
