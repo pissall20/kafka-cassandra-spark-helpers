@@ -52,6 +52,7 @@ class ModelTrainer(object):
         predictions, best_model_name, best_mape, best_model_obj = best_forecast_obj.get_best_forecast(
             data[kpi_column], self.pred_steps_seconds, available_models, split_ratio
         )
+        self.logger.info(f"Best Model selected: {best_model_name}")
         self.trained_model = best_model_obj
         return predictions, best_model_name, best_mape
 
