@@ -23,7 +23,7 @@ class Logger(object):
         # Optional replacement for .log suffix if mistakenly added
         name = name.replace(".log", "")
         logger = logging.getLogger(f"logs.{name}")  # logs is a namespace
-        logger.setLevel(logging.ERROR)
+        logger.setLevel(logging.DEBUG)
         if not logger.handlers:
             file_name = os.path.join(self.LOGGING_DIR, f"{name}.log")
             handler = logging.FileHandler(file_name)
@@ -31,7 +31,7 @@ class Logger(object):
                 "%(asctime)s %(levelname)s:%(name)s %(message)s"
             )
             handler.setFormatter(formatter)
-            handler.setLevel(logging.ERROR)
+            handler.setLevel(logging.DEBUG)
             logger.addHandler(handler)
         self._logger = logger
 
