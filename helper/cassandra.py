@@ -1,19 +1,16 @@
 import pandas as pd
 from cassandra.cluster import Cluster
+import settings
 
 from logger import Logger
 
 
 class CassandraInterface(object):
-    def __init__(
-        self, ip_address, port=9042, key_space=None, table_name=None, table_schema=None
-    ):
+    def __init__(self, ip_address, port=9042, key_space=None):
         self.ip_address = ip_address if isinstance(ip_address, list) else [ip_address]
         self.port = port
         self.key_space = key_space
         self.key_space_changed = False
-        self.table_name = table_name
-        self.table_schema = table_schema
         self.session = None
 
         self.logger = Logger(self.__class__.__name__).get()
@@ -26,22 +23,6 @@ class CassandraInterface(object):
     def key_space(self, key_space):
         self.key_space_changed = True
         self.__key_space = key_space
-
-    @property
-    def table_name(self):
-        return self.__table_name
-
-    @table_name.setter
-    def table_name(self, table_name):
-        self.__table_name = table_name
-
-    @property
-    def table_schema(self):
-        return self.table_schema
-
-    @table_schema.setter
-    def table_schema(self, table_schema):
-        self.__table_schema = table_schema
 
     def _connect_to_db(self):
         """
@@ -80,7 +61,7 @@ class CassandraInterface(object):
         """
         session = self.connect_to_db()
         rows = session.execute(
-            f"SELECT * FROM {self.table_name} WHERE {time_column}<'{end_timestamp}' "
+            f"SELECT * FROM {settings.CASSANDRA_TABLE_NAME} WHERE {time_column}<'{end_timestamp}' "
             f"and {time_column}>'{start_timestamp}' ALLOW FILTERING;"
         )
         if not rows:
@@ -101,7 +82,7 @@ class CassandraInterface(object):
         :return max_time_stamp: Last time stamp of the dataframe
         """
         session = self.connect_to_db()
-        rows = session.execute(f"SELECT * FROM {self.table_name}")
+        rows = session.execute(f"SELECT * FROM {settings.CASSANDRA_TABLE_NAME}")
         if not rows:
             raise ValueError("No rows were returned from the database")
         df = pd.DataFrame(list(rows))
@@ -119,25 +100,27 @@ class CassandraInterface(object):
         """
         return df[time_column].max().replace(tzinfo=None)
 
-    def write_rows(self, predictions_df):
+    def write_rows(self, df, table_name, table_schema):
         """
         Writes rows to Cassandra DB
-        :param predictions_df: Predictions with timestamp and identifiers
+        :param df: pd.DataFrame to be inserted in Cassandra
+        :param table_name: Table name of which the rows are to be inserted in
+        :param table_schema: Schema name of which the rows are to be inserted in
         :return: None
         """
         session = self.connect_to_db()
 
-        if not self.table_schema:
+        if not table_schema:
             self.logger.error("Writing initiated without table schema")
             raise ValueError("Please set the table schema")
-        if set(predictions_df.columns) != set(self.table_schema.keys()):
+        if set(df.columns) != set(table_schema.keys()):
             self.logger.error("Column(s) do not match the give table schema")
             raise ValueError("Column(s) do not match the give table schema")
 
-        col_names = ", ".join(predictions_df.columns)
-        query = f"INSERT INTO {self.table_name}({col_names}) VALUES ({', '.join(['?'] * len(predictions_df.columns))});"
+        col_names = ", ".join(df.columns)
+        query = f"INSERT INTO {table_name}({col_names}) VALUES ({', '.join(['?'] * len(df.columns))});"
         prepared_query = session.prepare(query)
-        for row in predictions_df.iterrows():
+        for row in df.iterrows():
             row = row[1]
             session.execute(prepared_query, row.values.tolist())
 
