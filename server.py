@@ -1,12 +1,12 @@
 from flask import Flask
+from flask.json import jsonify
 
 server = Flask(__name__)
 
-server.route("/")
 
-
+@server.route("/")
 def home_page():
-    return "Hello, World!"
+    return jsonify({"time": "today", "abc": "tomorrow"})
 
 
 if __name__ == "__main__":
