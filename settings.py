@@ -1,3 +1,4 @@
+import os
 # Settings
 
 CASSANDRA_IP = "127.0.0.1"
@@ -9,7 +10,7 @@ INITIAL_TRAINING_POINTS = 1500
 PREDICTION_STEPS_IN_SECONDS = 12
 
 MODEL_LOCATION = "models/"
-MODEL_ARCHIVE = "archive/"
+MODEL_ARCHIVE = os.path.join(MODEL_LOCATION, 'archive')
 
 TABLE_SCHEMA = {
     "primary_id": "text",
