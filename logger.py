@@ -12,7 +12,6 @@ class Logger(object):
 
     >>> logger2 = Logger('eugenie_realtime').get()
     """
-
     LOGGING_DIR = "logs/"
 
     def __init__(self, name):

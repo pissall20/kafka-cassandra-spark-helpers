@@ -58,7 +58,7 @@ class CassandraInterface(object):
         return self.session
 
     def retrieve_with_timestamps(
-        self, start_timestamp, end_timestamp, remove_tzinfo=True, time_column="key"
+        self, start_timestamp, end_timestamp, remove_tzinfo=True
     ):
         """
         Make a cql selection query in the cassandra
@@ -66,27 +66,24 @@ class CassandraInterface(object):
         :param start_timestamp: start timestamp as datetime.datetime() object
         :param end_timestamp: end timestamp as datetime.datetime() object
         :param remove_tzinfo: if true then remove the timezone info
-        :param time_column: Name of the datetime column
         :return: pd.DataFrame with sorted dates exclusive of both timestamps
         """
         session = self.connect_to_db()
         rows = session.execute(
-            f"SELECT * FROM {self.table_name} WHERE {time_column}<'{end_timestamp}' "
-            f"and {time_column}>'{start_timestamp}' ALLOW FILTERING;"
+            f"SELECT * FROM {self.table_name} WHERE key<'{end_timestamp}' and key>'{start_timestamp}' ALLOW FILTERING;"
         )
         if not rows:
             raise ValueError("No rows were returned from the database")
         df = pd.DataFrame(list(rows))
 
         if remove_tzinfo:
-            df[time_column] = df[time_column].replace(tzinfo=None)
-        df.sort_values(by=[time_column], inplace=True)
+            df["key"] = df["key"].replace(tzinfo=None)
+        df.sort_values(by=["key"], inplace=True)
         return df
 
-    def get_last_timestamp(self, time_column="key"):
+    def get_last_timestamp(self):
         """
         Get the last timestamp existing in the database
-        :param time_column: Name of the datetime column
         :return: max(date_index)
         """
         session = self.connect_to_db()
@@ -94,18 +91,18 @@ class CassandraInterface(object):
         if not rows:
             raise ValueError("No rows were returned from the database")
         df = pd.DataFrame(list(rows))
-        return df[time_column].max().replace(tzinfo=None)
+        return df["key"].max().replace(tzinfo=None)
 
-    def write_rows(self, start_timestamp, pred_steps_seconds, predictions):
+    def write_rows(self, start_timestamp, pred_steps, predictions):
         """
         Writes rows to Cassandra DB
         :param start_timestamp:
-        :param pred_steps_seconds:
+        :param pred_steps:
         :param predictions: Predictions from the forecasting engine
         :return: None
         """
         session = self.connect_to_db()
-        for i in range(pred_steps_seconds):
+        for i in range(pred_steps):
             session.execute(
                 f"INSERT INTO {self.table_name} (key, value) VALUES"
                 f" ('{start_timestamp + timedelta(seconds=i)}', {predictions[i]});"
@@ -145,9 +142,7 @@ class CassandraInterface(object):
             ]
         )
         # Add which keys are primary keys to the schema string
-        add_primary_keys = (
-            schema_string + f", PRIMARY KEY ({', '.join(list(primary_key_cols))})"
-        )
+        add_primary_keys = schema_string + f", PRIMARY KEY ({', '.join(list(primary_key_cols))})"
         query = f"CREATE TABLE {new_table_name} ({add_primary_keys})"
         self.connect_to_db().execute(query)
         self.logger.info(f"Successfully dropped table {new_table_name}")
