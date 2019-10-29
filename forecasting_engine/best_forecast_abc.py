@@ -9,6 +9,7 @@ class BestForecastInterface:
         and returns the train and test timeseries
         """
 
+    @staticmethod
     @abstractmethod
     def get_models():
         """
@@ -17,7 +18,9 @@ class BestForecastInterface:
         """
 
     @abstractmethod
-    def get_forecasts_from_all_models(self, time_series, train_ts, test_ts):
+    def get_forecasts_from_all_models(
+        self, time_series, train_ts, test_ts, forecasting_models
+    ):
         """
         It gets the forecasted values along with the mape from all the models
         supported by the forecasting_engine
@@ -36,5 +39,11 @@ class BestForecastInterface:
     @abstractmethod
     def get_best_mape(self):
         """
-        Returns the value for the best mape put of all the forecasting models
+        Returns the value for the best mape out of all the forecasting models
+        """
+
+    @abstractmethod
+    def best_model(self):
+        """
+        Returns the best model instance out of all the forecasting models
         """

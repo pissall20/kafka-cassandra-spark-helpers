@@ -1,7 +1,7 @@
 # coding=utf-8
-from algorithms.forecasting_engine.statsmodel_holtwinters import ExponentialSmoothing
-from algorithms.forecasting_engine.error_metrics import rmse, mape
-from algorithms.forecasting_engine.data_classes import forecasting_result
+from forecasting_engine.statsmodel_holtwinters import ExponentialSmoothing
+from forecasting_engine.error_metrics import rmse, mape
+from forecasting_engine.data_classes import forecasting_result
 import math
 import numpy as np
 
@@ -45,7 +45,7 @@ class HoltWinters(object):
                 )
                 # Save the forecasting results to be reflected back to the Manager
                 TrainTestData[3]["HoltWinters"] = forecasting_result(
-                    holtwinters_mape, holtwinters_rmse, best_trend
+                    holtwinters_mape, holtwinters_rmse, best_trend, self
                 )
             else:
                 print("QC failed for HoltWinters")

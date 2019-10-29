@@ -5,8 +5,8 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
 from numpy import array
-from algorithms.forecasting_engine.error_metrics import mape, rmse
-from algorithms.forecasting_engine.data_classes import forecasting_result
+from forecasting_engine.error_metrics import mape, rmse
+from forecasting_engine.data_classes import forecasting_result
 
 
 class Lstm(object):
@@ -74,7 +74,7 @@ class Lstm(object):
             best_cfg = []
             # Save the forecasting results to be reflected back to the Manager
             TrainTestData[3]["Lstm"] = forecasting_result(
-                mean_mape, mean_rmse, best_cfg
+                mean_mape, mean_rmse, best_cfg, self
             )
 
     # create a differenced series

@@ -1,7 +1,7 @@
 # from __future__ import division, absolute_import, print_function
 import numpy as np
-from algorithms.forecasting_engine.error_metrics import mape, rmse
-from algorithms.forecasting_engine.data_classes import forecasting_result
+from forecasting_engine.error_metrics import mape, rmse
+from forecasting_engine.data_classes import forecasting_result
 import statsmodels.api as sm
 
 
@@ -56,7 +56,7 @@ class LocalLinearTrend(sm.tsa.statespace.MLEModel):
             best_cfg = []
             # Save the forecasting results to be reflected back to the Manager
             TrainTestData[3]["LocalLinearTrend"] = forecasting_result(
-                mape_error, rmse_error, best_cfg
+                mape_error, rmse_error, best_cfg, self
             )
 
     @property

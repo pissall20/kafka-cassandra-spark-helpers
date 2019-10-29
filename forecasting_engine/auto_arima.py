@@ -1,8 +1,8 @@
 import numpy as np
 from pmdarima.arima import auto_arima
 from statsmodels.tsa.arima_model import ARIMA
-from algorithms.forecasting_engine.error_metrics import mape, rmse
-from algorithms.forecasting_engine.data_classes import forecasting_result
+from forecasting_engine.error_metrics import mape, rmse
+from forecasting_engine.data_classes import forecasting_result
 
 
 class Auto_Arima(object):
@@ -24,7 +24,7 @@ class Auto_Arima(object):
             best_mape, best_rmse, best_cfg = self._apply_auto_arima()
             # Save the forecasting results to be reflected back to the Manager
             TrainTestData[3]["Auto_Arima"] = forecasting_result(
-                best_mape, best_rmse, best_cfg
+                best_mape, best_rmse, best_cfg, self
             )
 
     def _apply_auto_arima(self):

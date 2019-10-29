@@ -1,5 +1,5 @@
-from algorithms.forecasting_engine.error_metrics import mape, rmse
-from algorithms.forecasting_engine.data_classes import forecasting_result
+from forecasting_engine.error_metrics import mape, rmse
+from forecasting_engine.data_classes import forecasting_result
 import time
 import numpy as np
 
@@ -27,7 +27,7 @@ class weighted_moving_average(object):
             wma_mape, wma_rmse = self._best_wma_model()
             # Save the forecasting results to be reflected back to the Manager
             TrainTestData[3]["weighted_moving_average"] = forecasting_result(
-                wma_mape, wma_rmse, []
+                wma_mape, wma_rmse, [], self
             )
 
     def _best_wma_model(self):
